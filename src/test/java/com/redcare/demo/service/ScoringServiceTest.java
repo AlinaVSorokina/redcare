@@ -38,7 +38,7 @@ class ScoringServiceTest {
     }
 
     @Test
-    void returnsFromCache_whenCacheContainsKey() {
+    void returnsFromCacheWhenCacheContainsKey() {
         String language = "Java";
         LocalDate date = LocalDate.of(2021, 1, 1);
 
@@ -61,18 +61,18 @@ class ScoringServiceTest {
     }
 
     @Test
-    void fetchesFromProvider_scoresAndCaches_whenCacheMiss() {
+    void fetchesFromProviderWhenCacheMiss() {
         String language = "Java";
         LocalDate date = LocalDate.of(2021, 1, 1);
 
-        Repository r1 = Repository.builder()
+        Repository repo1 = Repository.builder()
                 .id(1)
                 .stargazersCount(1000)
                 .forksCount(100)
                 .pushedAt(NOW.minus(30, ChronoUnit.DAYS).toString())
                 .build();
 
-        Repository r2 = Repository.builder()
+        Repository repo2 = Repository.builder()
                 .id(2)
                 .stargazersCount(2000)
                 .forksCount(200)
@@ -80,7 +80,7 @@ class ScoringServiceTest {
                 .build();
 
         when(cacheProvider.contains(language, date)).thenReturn(false);
-        when(searchProvider.getSearchResults(language, date)).thenReturn(List.of(r1, r2));
+        when(searchProvider.getSearchResults(language, date)).thenReturn(List.of(repo1, repo2));
 
         List<Repository> result = scoringService.getScoringInfo(language, date);
 
@@ -88,8 +88,6 @@ class ScoringServiceTest {
         assertTrue(result.get(0).getScore() > 0);
         assertTrue(result.get(1).getScore() > 0);
 
-        // verify cache put with scored repos
-        @SuppressWarnings("unchecked")
         ArgumentCaptor<List<Repository>> captor = ArgumentCaptor.forClass(List.class);
         verify(cacheProvider).put(eq(language), eq(date), captor.capture());
 
