@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class ScoringService {
 
     private final SearchProvider searchProvider;
     private final CacheProvider cacheProvider;
-
+    private final Clock clock;
 
     public List<Repository> getScoringInfo(String language, LocalDate creationDate) {
         if (cacheProvider.contains(language, creationDate)) {
@@ -35,7 +36,7 @@ public class ScoringService {
     }
 
     private Repository withScore(Repository repository) {
-        repository.setScore(calculateScore(repository));
+        repository.setScore(calculateScore(repository, clock));
         return repository;
     }
 }

@@ -16,6 +16,7 @@ import java.util.List;
 public class GitHubSearchProviderImpl implements SearchProvider {
 
     private final GitHubClient gitHubClient;
+    private final RateLimiter rateLimiter;
 
     private static final String STAR_SORT = "stars";
     private static final String FORK_SORT = "forks";
@@ -25,7 +26,7 @@ public class GitHubSearchProviderImpl implements SearchProvider {
         try {
             List<GitHubRepository> repos =
                     new ArrayList<>(gitHubClient.getPageOfRepos(language, creationDate, STAR_SORT, 1));
-            Thread.sleep(1000);
+            rateLimiter.acquire();
             repos.addAll(gitHubClient.getPageOfRepos(language, creationDate, FORK_SORT, 1));
             return repos.stream()
                     .distinct()
@@ -33,8 +34,6 @@ public class GitHubSearchProviderImpl implements SearchProvider {
                     .toList();
         } catch (IOException e) {
             throw new BusinessException("unexpected data");
-        } catch (InterruptedException e) {
-            throw new BusinessException("unexpected failure");
         }
     }
 

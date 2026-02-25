@@ -12,7 +12,7 @@ import java.util.Map;
 @Service
 public class CacheProviderImpl implements CacheProvider {
 
-    Map<Key, List<Repository>> cache = new HashMap<>();
+    private final Map<Key, List<Repository>> cache = new HashMap<>();
 
     public void put(String language, LocalDate creationDate, List<Repository> items) {
         cache.put(new Key(language, creationDate), items);
