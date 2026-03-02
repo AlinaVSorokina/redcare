@@ -8,12 +8,13 @@ API
 Request
 
 /scoring?language=laguageName&creationDate=date 
+
 language: If the language is not set or does not exist, this value will not be used in the search.
+
 date: should be in YYYY-MM-DD format. if not set or is in the wrong format "bad request" will be returned
 
-Response 
+Response has json format
 
-has json format
 {
     "repoId": id,  // long
     "score": 15,  // int
